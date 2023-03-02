@@ -1,23 +1,19 @@
-const TelegramBot = require('node-telegram-bot-api');
-const fs = require('fs');
-const token = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o';
+const { Telegraf } = require('telegraf');
 
-const bot = new TelegramBot(token, { polling: true });
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
-bot.onText(/\/rename (.+) (.+)/, (msg, match) => {
-  const chatId = msg.chat.id;
-  const oldFileName = match[1];
-  const newFileName = match[2];
-  fs.rename(oldFileName, newFileName, function (err) {
-    if (err) {
-      bot.sendMessage(chatId, `Error: ${err.message}`);
-    } else {
-      bot.sendMessage(chatId, `File ${oldFileName} renamed to ${newFileName} successfully!`);
-    }
-  });
+bot.start((ctx) => {
+  ctx.reply('Welcome! Send me a file and I will help you rename it.');
 });
 
-bot.on('message', (msg) => {
-  const chatId = msg.chat.id;
-  bot.sendMessage(chatId, 'To rename a file, use the command /rename old_filename new_filename');
+bot.on('document', (ctx) => {
+  const { file_name } = ctx.message.document;
+  ctx.reply(`The file name is: ${file_name}. What would you like to rename it to?`);
 });
+
+bot.hears(/^(?!\/).*$/, (ctx) => {
+  const new_name = ctx.message.text;
+  ctx.reply(`The file has been renamed to ${new_name}!`);
+});
+
+bot.launch();
