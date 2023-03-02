@@ -9,6 +9,7 @@
     "build": "echo 'No build step defined'"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "telegraf": "^4.8.3"
   }
 }
